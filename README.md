@@ -31,27 +31,13 @@ Train with your dataset path:
 python train.py --data-dir "C:\path\to\dataset" --epochs 25 --fine-tune-epochs 10
 ```
 
-Run the web app:
+Run the Streamlit web app:
 
 ```powershell
-python app.py
+streamlit run app.py
 ```
 
-Open `http://127.0.0.1:5000`.
-
-## REST API
-
-Health:
-
-```powershell
-curl http://127.0.0.1:5000/health
-```
-
-Prediction:
-
-```powershell
-curl -X POST http://127.0.0.1:5000/predict -F "file=@sample.jpg"
-```
+Open `http://localhost:8501`.
 
 ## Important Outputs
 
