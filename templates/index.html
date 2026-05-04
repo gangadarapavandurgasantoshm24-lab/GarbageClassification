@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GarbageClassification</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+  <main class="shell">
+    <!-- Header shows the app name and current model status. -->
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">AI Image Classifier</p>
+        <h1>GarbageClassification</h1>
+      </div>
+      <div class="status-pill {% if model_ready %}ready{% else %}warning{% endif %}">
+        <span></span>
+        {% if model_ready %}Model ready{% else %}Train model{% endif %}
+      </div>
+    </header>
+
+    <!-- Hero section gives the main upload message and model summary. -->
+    <section class="hero">
+      <div class="hero-copy">
+        <h2>Upload image</h2>
+        <p>Choose an image to predict cardboard, glass, metal, paper, or plastic with confidence scores.</p>
+      </div>
+      <div class="metric-grid">
+        <div class="metric">
+          <span>Classes</span>
+          <strong>5</strong>
+        </div>
+        <div class="metric">
+          <span>Explainability</span>
+          <strong>Grad-CAM</strong>
+        </div>
+        <div class="metric">
+          <span>{% if model_metrics %}{{ model_metrics.accuracy_label }}{% else %}Accuracy{% endif %}</span>
+          <strong>{% if model_metrics %}{{ model_metrics.accuracy_percent }}{% else %}--{% endif %}</strong>
+        </div>
+      </div>
+    </section>
+
+    {% if model_error %}
+    <section class="notice">
+      <strong>Model artifact missing.</strong>
+      <span>Run training first: <code>python train.py --data-dir "C:\path\to\dataset"</code></span>
+    </section>
+    {% endif %}
+
+    <!-- Main workspace contains the image upload panel and prediction result panel. -->
+    <section class="workspace">
+      <div class="panel uploader-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Image Upload</p>
+            <h3>Classify Waste</h3>
+          </div>
+          <button id="clearBtn" class="icon-btn" type="button" title="Clear selection">Clear</button>
+        </div>
+
+        <!-- JavaScript reads this form and sends the selected image to /predict. -->
+        <form id="uploadForm" class="dropzone">
+          <input id="fileInput" type="file" name="file" accept="image/*">
+          <div class="drop-icon">+</div>
+          <h4>Drop image here</h4>
+          <p>or click to browse JPG, PNG, WEBP, or BMP</p>
+        </form>
+
+        <div class="preview-wrap">
+          <img id="previewImage" alt="Uploaded image preview">
+          <div id="emptyPreview" class="empty-preview">Preview appears here</div>
+        </div>
+
+        <button id="classifyBtn" class="primary-btn" type="button" disabled>
+          <span class="spinner" aria-hidden="true"></span>
+          <span class="btn-text">Classify</span>
+        </button>
+        <p id="errorBox" class="error-box"></p>
+      </div>
+
+      <!-- Prediction values are filled by static/js/app.js after classification. -->
+      <div class="panel result-panel">
+        <div class="panel-heading">
+          <div>
+            <p class="eyebrow">Prediction Output</p>
+            <h3>Result</h3>
+          </div>
+          <span id="latency" class="latency">-- ms</span>
+        </div>
+
+        <div id="placeholder" class="placeholder">
+          <h4>Awaiting image</h4>
+          <p>Results, confidence, probabilities, and Grad-CAM will appear after classification.</p>
+        </div>
+
+        <div id="resultContent" class="result-content">
+          <div class="prediction-card">
+            <span>Predicted category</span>
+            <strong id="predictedClass">--</strong>
+            <div class="confidence-row">
+              <span>Confidence</span>
+              <b id="confidenceScore">--</b>
+            </div>
+            <p id="warningText" class="warning-text"></p>
+          </div>
+
+          <div class="probabilities">
+            <h4>Class Probabilities</h4>
+            <div id="probabilityList"></div>
+          </div>
+
+          <div class="explain-grid">
+            <figure>
+              <img id="originalOutput" alt="Original uploaded image">
+              <figcaption>Original</figcaption>
+            </figure>
+            <figure>
+              <img id="gradcamOutput" alt="Grad-CAM highlighted model attention">
+              <figcaption>Grad-CAM</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Extra information shown below the main classifier. -->
+    <section class="details">
+      <div class="panel compact">
+        <p class="eyebrow">Example Predictions</p>
+        <div class="chips">
+          <span>cardboard</span>
+          <span>glass</span>
+          <span>metal</span>
+          <span>paper</span>
+          <span>plastic</span>
+        </div>
+      </div>
+
+      <div class="panel compact">
+        <p class="eyebrow">Dataset Statistics</p>
+        {% if stats %}
+          <div class="stats-grid">
+            <div><span>Total</span><strong>{{ stats.total_images }}</strong></div>
+            <div><span>Imbalance</span><strong>{{ stats.imbalance_ratio_max_to_min }}</strong></div>
+            <div><span>Flag</span><strong>{% if stats.is_imbalanced %}Imbalanced{% else %}Balanced{% endif %}</strong></div>
+          </div>
+        {% else %}
+          <p class="muted">Train once to populate dataset statistics and class imbalance details.</p>
+        {% endif %}
+      </div>
+    </section>
+  </main>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

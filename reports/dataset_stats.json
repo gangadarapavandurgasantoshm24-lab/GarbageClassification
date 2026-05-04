@@ -1,0 +1,19 @@
+{
+  "total_images": 2438,
+  "class_counts": {
+    "cardboard": 164,
+    "glass": 501,
+    "metal": 411,
+    "paper": 594,
+    "plastic": 768
+  },
+  "class_percentages": {
+    "cardboard": 6.73,
+    "glass": 20.55,
+    "metal": 16.86,
+    "paper": 24.36,
+    "plastic": 31.5
+  },
+  "imbalance_ratio_max_to_min": 4.683,
+  "is_imbalanced": true
+}
