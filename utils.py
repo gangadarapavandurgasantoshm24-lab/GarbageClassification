@@ -7,7 +7,7 @@ import numpy as np
 from PIL import Image
 
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
+ROOT_DIR = Path(__file__).resolve().parent
 PRIMARY_MODEL_PATH = ROOT_DIR / "model" / "garbage_model.h5"
 KERAS_MODEL_PATH = ROOT_DIR / "models" / "best_model.keras"
 LABELS_PATH = ROOT_DIR / "models" / "class_labels.json"
